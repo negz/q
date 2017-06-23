@@ -1,0 +1,380 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "q.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/queues": {
+      "get": {
+        "operationId": "ListQueues",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoListQueuesResponse"
+            }
+          }
+        },
+        "tags": [
+          "Q"
+        ]
+      },
+      "post": {
+        "operationId": "NewQueue",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoNewQueueResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoNewQueueRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      }
+    },
+    "/v1/queues/{queue_id}": {
+      "get": {
+        "operationId": "GetQueue",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoGetQueueResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteQueue",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoDeleteQueueResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      },
+      "post": {
+        "operationId": "Add",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoAddResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoMessage"
+            }
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      }
+    },
+    "/v1/queues/{queue_id}/peek": {
+      "get": {
+        "operationId": "Peek",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoPeekResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      }
+    },
+    "/v1/queues/{queue_id}/pop": {
+      "get": {
+        "operationId": "Pop",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoPopResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      }
+    },
+    "/v1/queues/{queue_id}/tag": {
+      "delete": {
+        "operationId": "DeleteQueueTag",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoDeleteQueueTagResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoTag"
+            }
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      },
+      "post": {
+        "operationId": "AddQueueTag",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protoAddQueueTagResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queue_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoTag"
+            }
+          }
+        ],
+        "tags": [
+          "Q"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "QueueStore": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "MEMORY"
+      ],
+      "default": "UNKNOWN"
+    },
+    "protoAddQueueTagResponse": {
+      "type": "object"
+    },
+    "protoAddResponse": {
+      "type": "object"
+    },
+    "protoDeleteQueueResponse": {
+      "type": "object"
+    },
+    "protoDeleteQueueTagResponse": {
+      "type": "object"
+    },
+    "protoGetQueueResponse": {
+      "type": "object",
+      "properties": {
+        "queue": {
+          "$ref": "#/definitions/protoQueue"
+        }
+      }
+    },
+    "protoListQueuesResponse": {
+      "type": "object",
+      "properties": {
+        "queues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoQueue"
+          }
+        }
+      }
+    },
+    "protoMessage": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/protoMetadata"
+        },
+        "payload": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "protoMetadata": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoTag"
+          }
+        }
+      }
+    },
+    "protoNewQueueRequest": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "$ref": "#/definitions/QueueStore"
+        },
+        "limit": {
+          "type": "string",
+          "format": "int64"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoTag"
+          }
+        }
+      }
+    },
+    "protoNewQueueResponse": {
+      "type": "object",
+      "properties": {
+        "queue": {
+          "$ref": "#/definitions/protoQueue"
+        }
+      }
+    },
+    "protoPeekResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "$ref": "#/definitions/protoMessage"
+        }
+      }
+    },
+    "protoPopResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "$ref": "#/definitions/protoMessage"
+        }
+      }
+    },
+    "protoQueue": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/protoMetadata"
+        },
+        "store": {
+          "$ref": "#/definitions/QueueStore"
+        }
+      }
+    },
+    "protoTag": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
