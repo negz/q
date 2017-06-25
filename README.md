@@ -45,9 +45,74 @@ port.
 * [q/rpc/proto](https://godoc.org/github.com/negz/q/rpc/proto) - Protocol buffer specification for the gRPC API.
 * [q/test/fixtures](https://godoc.org/github.com/negz/q/test/fixtures) - Common fixtures used to test `q`.
 
+# Running
+Kubernetes deployment configs are provided under `kube/`. Use minikube to run
+`q` locally:
+```
+# Install Minikube and deploy q
+$ brew cask install minikube
+$ minikube start
+$ kubectl create namespace q
+$ kubectl -n q create -f kube/deployment.yaml
+$ kubectl -n q create -f kube/service.yaml
+
+# Use kubectl to determine which node ports map to which internal ports.
+$ kubectl -n q describe service q|grep Port
+Type:                   NodePort
+Port:                   grpc    10002/TCP
+NodePort:               grpc    31051/TCP
+Port:                   metrics 10003/TCP
+NodePort:               metrics 31457/TCP
+Port:                   rest    80/TCP
+NodePort:               rest    30647/TCP
+
+$ minikube service -n q q --url
+http://192.168.99.101:31051  # gRPC is listening here.
+http://192.168.99.101:31457  # Metrics are being served here.
+http://192.168.99.101:30647  # The REST gateway is being served here.
+
+# Use it!
+$ docker pull negz/qcli
+$ docker run negz/qcli /qcli -s 192.168.99.101:31051 new MEMORY 10 -t function="cubesat launcher"
+{
+  "queue": {
+    "meta": {
+      "id": "f9e0925d-bfaa-4e59-96ae-dd78a0bb751d",
+      "created": "2017-06-25T23:01:08.008101953Z",
+      "tags": [
+        {
+          "key": "function",
+          "value": "cubesat launcher"
+        }
+      ]
+    },
+    "store": "MEMORY"
+  }
+}
+$ echo "dove"|docker run negz/qcli /qcli -s 192.168.99.101:31051 add f9e0925d-bfaa-4e59-96ae-dd78a0bb751d -t size=3U
+{
+  "message": {
+    "meta": {
+      "id": "91432eee-e5ef-4f14-84ab-eb471e2e9d61",
+      "created": "2017-06-25T23:05:44.628686920Z",
+      "tags": [
+        {
+          "key": "size",
+          "value": "3U"
+        }
+      ]
+    }
+  }
+}
+$ curl -s http://192.168.99.101:31457/metrics|grep queue
+# HELP queue_messages_enqueued_total Number of queued messages.
+# TYPE queue_messages_enqueued_total counter
+queue_messages_enqueued_total{queue="f9e0925d-bfaa-4e59-96ae-dd78a0bb751d"} 1
+```
+
 # Building
-You'll need working Go and Docker installs. This project has been tested and
-built against Go 1.8.3. Clone the project and run the build script to compile
+You'll need working Go and Docker installs. This project has been built and
+tested against Go 1.8. Clone the project and run the build script to compile
 the binaries and create Docker images:
 ```
 $ mkdir -p ${GOPATH}/src/github.com/negz
@@ -79,74 +144,3 @@ $ go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 * The `NewMessage` protocol buffer message is not included in the generated
 Swagger API docs. This makes it difficult to discover how to add new messages to
 a queue.
-
-# Example usage
-```
-$ qcli new MEMORY 10 -t cool=satellites
-{
-  "queue": {
-    "meta": {
-      "id": "01189abe-5fcb-488f-a32d-c59315fa3b21",
-      "created": "2017-06-25T09:58:08.535425833Z",
-      "tags": [
-        {
-          "key": "cool",
-          "value": "satellites"
-        }
-      ]
-    },
-    "store": "MEMORY"
-  }
-}
-
-$ echo sputnik|qcli add 01189abe-5fcb-488f-a32d-c59315fa3b21 -t origin=ussr
-{
-  "message": {
-    "meta": {
-      "id": "a4d5a758-7845-4cb0-9c13-f407b8af178b",
-      "created": "2017-06-25T09:59:40.844615906Z",
-      "tags": [
-        {
-          "key": "origin",
-          "value": "ussr"
-        }
-      ]
-    },
-    "payload": "c3B1dG5pawo="
-  }
-}
-
-$ echo dove|qcli add 01189abe-5fcb-488f-a32d-c59315fa3b21 -t origin=usa
-{
-  "message": {
-    "meta": {
-      "id": "6d4978d4-209e-4fb1-a409-d1e46f64fee3",
-      "created": "2017-06-25T10:00:05.249403455Z",
-      "tags": [
-        {
-          "key": "origin",
-          "value": "usa"
-        }
-      ]
-    },
-    "payload": "ZG92ZQo="
-  }
-}
-
-$ qcli.go pop 01189abe-5fcb-488f-a32d-c59315fa3b21
-{
-  "message": {
-    "meta": {
-      "id": "a4d5a758-7845-4cb0-9c13-f407b8af178b",
-      "created": "2017-06-25T09:59:40.844615906Z",
-      "tags": [
-        {
-          "key": "origin",
-          "value": "ussr"
-        }
-      ]
-    },
-    "payload": "c3B1dG5pawo="
-  }
-}
-```
