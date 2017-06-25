@@ -10,16 +10,17 @@ Of course, with all queues and their messages being stored in-memory, everything
 will be forgotten when the `q` process dies. :)
 
 # Components
-* `q` - The main logic. Exposes a gRPC API on port 10002.
-* `qrest` - Exposes a (mostly) automatically generated REST to gRPC gateway on port 80. See `rpc/proto/q.swagger.json` for the API spec.
-* `qcli` - A commandline gRPC client.
+The q service consists of three binaries:
+* `q` - The main logic. Serves a gRPC API on port 10002.
+* `qrest` - Serves a (mostly) automatically generated REST to gRPC gateway on port 80. See `rpc/proto/q.swagger.json` for the API spec.
+* `qcli` - A commandline gRPC client for `q`.
 
 # Metrics, logging, and management
 `q` exposes Prometheus metrics via HTTP at `/metrics` on port 10003. We expose
 the count of total enqueued and consumed messages, tagged by queue ID. Total
 errors are also exposed, tagged by queue and error type. We only expose counts,
 not gauges, because counts
-[don't lose meaning when downsampled in a timeseries]( https://goo.gl/WTHgAq).
+[don't lose meaning when downsampled in a timeseries](https://goo.gl/WTHgAq).
 
 `qrest` also exposes Prometheus metrics at `/metrics` on port 80, but only the
 process and Go runtime information Prometheus provides for free.
@@ -30,6 +31,19 @@ Run them with the `-d` flag for debug logging in a more human friendly format.
 `q` can be terminated immediately by hitting `/quitquitquit` on its metrics
 port. `qrest` can also be terminated by hitting `/quitquitquit` on its main
 port.
+
+# Packages
+`q` consists of the following packages. Refer to their GoDocs for API details:
+* [q](https://godoc.org/github.com/negz/q) - Defines the core interfaces and types for the queue service.
+* [q/e](https://godoc.org/github.com/negz/q/e) - Provides error types and handling.
+* [q/factory](https://godoc.org/github.com/negz/q/factory) - A `q.Factory` implementation.
+* [q/logging](https://godoc.org/github.com/negz/q/logging) - Log emitting wrappers for `q.Queue` and `q.Manager`.
+* [q/manager](https://godoc.org/github.com/negz/q/manager) - Implementations of `q.Manager`.
+* [q/memory](https://godoc.org/github.com/negz/q/memory) - An in-memory implementation of `q.Queue`.
+* [q/metrics](https://godoc.org/github.com/negz/q/metrics) - Metric emitting wrappers for `q.Queue`.
+* [q/rpc](https://godoc.org/github.com/negz/q/rpc) - Implements gRPC API for `q`.
+* [q/rpc/proto](https://godoc.org/github.com/negz/q/rpc/proto) - Protocol buffer specification for the gRPC API.
+* [q/test/fixtures](https://godoc.org/github.com/negz/q/test/fixtures) - Common fixtures used to test `q`.
 
 # Building
 You'll need working Go and Docker installs. This project has been tested and
@@ -111,7 +125,7 @@ $ echo dove|qcli add 01189abe-5fcb-488f-a32d-c59315fa3b21 -t origin=usa
       "tags": [
         {
           "key": "origin",
-          "value": "germany"
+          "value": "usa"
         }
       ]
     },

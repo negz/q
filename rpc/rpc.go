@@ -41,7 +41,7 @@ func NewServer(l net.Listener, m q.Manager, o ...Option) *Server {
 	return s
 }
 
-// Serve begins serving gRPC requests.
+// Serve gRPC requests forever.
 func (s *Server) Serve() error {
 	g := grpc.NewServer()
 	proto.RegisterQServer(g, &qServer{s.f, s.m})
