@@ -1,0 +1,47 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: q
+  labels:
+    app: q
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: q
+    spec:
+      containers:
+      - name: q
+        image: negz/queue:latest
+        command: ["/q"]
+        ports:
+        - containerPort: 10002
+          name: grpc
+        - containerPort: 10003
+          name: metrics
+        env:
+          - name: Q_DEBUG
+            value: "true"
+        livenessProbe:
+          initialDelaySeconds: 5
+          httpGet:
+            port: 10003
+            path: /metrics
+      - name: qrest
+        image: negz/qrest:latest
+        command: ["/qrest"]
+        args:
+          - "localhost:10002"
+        ports:
+        - containerPort: 80
+          name: rest
+        env:
+          - name: QREST_DEBUG
+            value: "true"
+        livenessProbe:
+          initialDelaySeconds: 5
+          httpGet:
+            port: 80
+            path: /metrics
