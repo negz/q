@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
@@ -35,7 +36,7 @@ func localhostWithRandomPort() (string, error) {
 // * Adding to full queues
 // * Popping from empty queues
 func TestIntegration(t *testing.T) {
-	mx, _ := metrics.NewPrometheus()
+	mx, _ := metrics.NewPrometheus(prometheus.NewRegistry())
 	m := manager.Instrumented(
 		manager.New(),
 		manager.WithMetrics(mx),

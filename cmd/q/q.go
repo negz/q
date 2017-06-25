@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -37,7 +38,7 @@ func main() {
 	}
 	kingpin.FatalIfError(err, "cannot create logger")
 
-	mx, gatherer := metrics.NewPrometheus()
+	mx, gatherer := metrics.NewPrometheus(prometheus.NewRegistry())
 	m := manager.Instrumented(
 		manager.New(),
 		manager.WithMetrics(mx),

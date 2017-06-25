@@ -18,9 +18,7 @@ type prom struct {
 
 // NewPrometheus returns a new implementation of Metrics that exposes metrics to
 // Prometheus.
-func NewPrometheus() (q.Metrics, prometheus.Gatherer) {
-	r := prometheus.NewRegistry()
-
+func NewPrometheus(r prometheus.Registerer) (q.Metrics, prometheus.Gatherer) {
 	enqueued := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "queue_messages_enqueued_total",
