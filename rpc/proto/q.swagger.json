@@ -122,7 +122,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/protoMessage"
+              "$ref": "#/definitions/protoNewMessage"
             }
           }
         ],
@@ -255,7 +255,12 @@
       "type": "object"
     },
     "protoAddResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "message": {
+          "$ref": "#/definitions/protoMessage"
+        }
+      }
     },
     "protoDeleteQueueResponse": {
       "type": "object"

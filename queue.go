@@ -96,3 +96,8 @@ type Manager interface {
 	Delete(id uuid.UUID) error       // Delete an existing queue given its ID.
 	List() ([]Queue, error)          // List all existing queues.
 }
+
+// A Factory produces new queues with the requested store, limit, and tags.
+type Factory interface {
+	New(s Store, limit int, t ...Tag) (Queue, error)
+}

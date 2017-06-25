@@ -21,24 +21,30 @@ type linkedList struct {
 
 func (l *linkedList) add(m *q.Message) {
 	e := &element{message: m}
-	if l.tail == nil {
+	if l.head == nil { // This list is empty.
 		l.head = e
 		l.tail = e
 		l.length = 1
 		return
 	}
 	l.tail.next = e
-	l.tail = l.tail.next
+	l.tail = e
 	l.length++
+	return
 }
 
 func (l *linkedList) pop() *q.Message {
-	if l.head == nil {
+	if l.head == nil { // This list is empty.
 		return nil
 	}
 	m := l.head.message
-	l.head = l.head.next
 	l.length--
+	if l.head.next == nil { // This list has a single element.
+		l.head = nil
+		l.tail = nil
+		return m
+	}
+	l.head = l.head.next
 	return m
 }
 

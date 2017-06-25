@@ -70,7 +70,7 @@ func request_Q_GetQueue_0(ctx context.Context, marshaler runtime.Marshaler, clie
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.GetQueue(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -97,7 +97,7 @@ func request_Q_DeleteQueue_0(ctx context.Context, marshaler runtime.Marshaler, c
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.DeleteQueue(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -128,7 +128,7 @@ func request_Q_AddQueueTag_0(ctx context.Context, marshaler runtime.Marshaler, c
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.AddQueueTag(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -159,7 +159,7 @@ func request_Q_DeleteQueueTag_0(ctx context.Context, marshaler runtime.Marshaler
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.DeleteQueueTag(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -190,7 +190,7 @@ func request_Q_Add_0(ctx context.Context, marshaler runtime.Marshaler, client QC
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.Add(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -217,7 +217,7 @@ func request_Q_Pop_0(ctx context.Context, marshaler runtime.Marshaler, client QC
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.Pop(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -244,7 +244,7 @@ func request_Q_Peek_0(ctx context.Context, marshaler runtime.Marshaler, client Q
 	protoReq.QueueId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, err
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "queue_id", err)
 	}
 
 	msg, err := client.Peek(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -298,6 +298,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_ListQueues_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -326,6 +327,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_NewQueue_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -354,6 +356,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_GetQueue_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -382,6 +385,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_DeleteQueue_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -410,6 +414,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_AddQueueTag_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -438,6 +443,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_DeleteQueueTag_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -466,6 +472,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_Add_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -494,6 +501,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_Pop_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
@@ -522,6 +530,7 @@ func RegisterQHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cli
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
 		resp, md, err := request_Q_Peek_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)

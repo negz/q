@@ -38,7 +38,7 @@ func Tagged(t ...q.Tag) Option {
 	}
 }
 
-// New returns a new FIFO q backed by an in-memory linked list.
+// New returns a new FIFO queue backed by an in-memory linked list.
 func New(o ...Option) q.Queue {
 	meta := &q.Metadata{ID: uuid.New(), Created: time.Now(), Tags: &q.Tags{}}
 	f := &fifo{meta: meta, ll: &linkedList{}, limit: q.Unbounded, m: &sync.RWMutex{}}
@@ -68,7 +68,7 @@ func (f *fifo) Add(m *q.Message) error {
 	f.m.Lock()
 	defer f.m.Unlock()
 	if (f.limit != q.Unbounded) && (f.ll.length >= f.limit) {
-		return e.ErrFull(errors.Errorf("f %s has reached limit of %d messages", f.ID(), f.limit))
+		return e.ErrFull(errors.Errorf("queue %s has reached limit of %d messages", f.ID(), f.limit))
 	}
 	f.ll.add(m)
 	return nil
@@ -79,7 +79,7 @@ func (f *fifo) Pop() (*q.Message, error) {
 	defer f.m.Unlock()
 	m := f.ll.pop()
 	if m == nil {
-		return nil, e.ErrNotFound(errors.Errorf("f %s is empty", f.ID()))
+		return nil, e.ErrNotFound(errors.Errorf("queue %s is empty", f.ID()))
 	}
 	return m, nil
 }
@@ -89,7 +89,7 @@ func (f *fifo) Peek() (*q.Message, error) {
 	defer f.m.RUnlock()
 	m := f.ll.peek()
 	if m == nil {
-		return nil, e.ErrNotFound(errors.Errorf("f %s is empty", f.ID()))
+		return nil, e.ErrNotFound(errors.Errorf("queue %s is empty", f.ID()))
 	}
 	return m, nil
 }

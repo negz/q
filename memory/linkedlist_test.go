@@ -89,3 +89,18 @@ func TestLinkedList(t *testing.T) {
 		}
 	})
 }
+
+// TestAddPopAddPop tests for a bug where new messages added to a linked list
+// cannot be consumed if the queue has previously been populated and consumed.
+func TestAddPopAddPop(t *testing.T) {
+	for _, tt := range linkedListTests {
+		l := &linkedList{}
+		for _, b := range tt.list {
+			l.add(&q.Message{Payload: b})
+			if got := l.pop(); !reflect.DeepEqual(got.Payload, b) {
+				t.Errorf("l.pop(): want %v, got %v", b, got.Payload)
+				continue
+			}
+		}
+	}
+}

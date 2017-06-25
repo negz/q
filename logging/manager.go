@@ -56,7 +56,13 @@ func (l *manager) Delete(id uuid.UUID) error {
 }
 
 func (l *manager) List() ([]q.Queue, error) {
-	return l.w.List()
+	q, err := l.w.List()
+	if err != nil {
+		l.log.Error("list queues", zap.Error(err))
+		return nil, err
+	}
+	l.log.Debug("list queues")
+	return q, nil
 }
 
 func idField(id uuid.UUID) zapcore.Field {

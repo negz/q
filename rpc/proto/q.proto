@@ -7,6 +7,10 @@ import "google/protobuf/timestamp.proto";
 package proto;
 
 option (gogoproto.goproto_registration) = true;
+option (gogoproto.unmarshaler_all) = false;
+option (gogoproto.marshaler_all) = false;
+option (gogoproto.sizer_all) = false;
+option (gogoproto.equal_all) = false;
 
 service Q {
     rpc ListQueues(ListQueuesRequest) returns (ListQueuesResponse) {
@@ -114,10 +118,12 @@ message DeleteQueueTagResponse {}
 
 message AddRequest {
     string queue_id = 1;
-    Message message = 2;
+    NewMessage message = 2;
 }
 
-message AddResponse {}
+message AddResponse {
+    Message message = 1;
+}
 
 message PopRequest {
     string queue_id = 1;
@@ -142,8 +148,17 @@ message Tag {
 
 message Metadata {
     string id = 1;
-    google.protobuf.Timestamp created = 2 [(gogoproto.stdtime) = true];
+    google.protobuf.Timestamp created = 2;
     repeated Tag tags = 3;
+}
+
+// A NewMessage is the user-writable subset of a Message. We could use Message
+// for new messages and just ignore any ID or create times the caller sent, but
+// doing so would cause the grpc-gateway swagger spec generator to generate a
+// misleading input.
+message NewMessage {
+    repeated Tag tags = 1;
+    bytes payload = 2;
 }
 
 message Message {
