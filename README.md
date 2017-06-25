@@ -1,4 +1,4 @@
-# q  [![Godoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/negz/secret-volume) [![Travis](https://img.shields.io/travis/negz/secret-volume.svg?maxAge=300)](https://travis-ci.org/negz/q/)
+# q  [![Godoc](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/negz/q) [![Travis](https://img.shields.io/travis/negz/q.svg?maxAge=300)](https://travis-ci.org/negz/q/)
 A toy in-memory queueing service with a lot of plumbing. q exposes an arbitrary
 number of in-memory FIFO queues via gRPC. Each queue supports add, peek, and pop
 operations. Queues may be limited in size or unbounded.
