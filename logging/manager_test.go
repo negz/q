@@ -38,7 +38,7 @@ func TestManager(t *testing.T) {
 		}
 
 		if !reflect.DeepEqual(queue, got) {
-			t.Errorf("m.Get(%v):\nwant %+#v\ngot %+#v", queue, got)
+			t.Errorf("m.Get(%v):\nwant %+#v\ngot %+#v", queue.ID(), queue, got)
 		}
 	})
 
