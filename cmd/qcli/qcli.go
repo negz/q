@@ -65,7 +65,6 @@ func main() {
 		peekMessage      = app.Command("peek", "Preview a message from the queue.")
 		peekMessageQueue = peekMessage.Arg("queue", "ID of queue in which to peek at message.").String()
 	)
-
 	kp := kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	conn, err := grpc.Dial(*server, grpc.WithInsecure())

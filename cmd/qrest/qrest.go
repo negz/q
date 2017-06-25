@@ -57,7 +57,6 @@ func main() {
 		stop   = app.Flag("close-after", "Wait this long at shutdown before closing HTTP connections.").Default("1m").Duration()
 		kill   = app.Flag("kill-after", "Wait this long at shutdown before exiting.").Default("2m").Duration()
 	)
-
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	var log *zap.Logger

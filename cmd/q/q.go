@@ -22,7 +22,7 @@ const (
 
 func main() {
 	var (
-		app = kingpin.New(filepath.Base(os.Args[0]), "An in-memory FIFO queue server.")
+		app = kingpin.New(filepath.Base(os.Args[0]), "An in-memory FIFO queue server.").DefaultEnvars()
 
 		debug    = app.Flag("debug", "Run with debug logging.").Short('d').Bool()
 		listen   = app.Flag("listen", "Address at which to listen for gRPC connections.").Default(":10002").String()
