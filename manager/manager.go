@@ -1,3 +1,5 @@
+// Package manager provides implementations of queue managers, which act as an
+// index of various FIFO queues.
 package manager
 
 import (

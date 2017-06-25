@@ -1,3 +1,4 @@
+// Package q provides interfaces and types for use in a FIFO queue system.
 package q
 
 import (

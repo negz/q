@@ -1,3 +1,5 @@
+// Package metrics provides implementations of the q.Metrics interface and a
+// wrapper to expose metrics for any implementation of the q.Queue interface.
 package metrics
 
 import (

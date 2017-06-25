@@ -1,3 +1,4 @@
+// Package rpc implements a gRPC server for the q queue service.
 package rpc
 
 import (
