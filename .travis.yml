@@ -13,8 +13,8 @@ install:
 
 script:
   - ./scripts/test.sh
-  - gometalinter --vendor --deadline 5m --disable gotype --errors ./...
-  - gometalinter --vendor --deadline 5m --disable gotype --disable gas --exclude "_test\.go" --exclude "not checked.+Close" ./...
+  - gometalinter --vendor --deadline 5m --disable gotype --errors ./... --exclude "\.pb.*\.go" --exclude "_strings\.go"
+  - gometalinter --vendor --deadline 5m --disable gotype --disable gas --exclude "\.pb.*\.go" --exclude "_strings\.go" --exclude "_test\.go" --exclude "not checked.+Close" ./...
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
