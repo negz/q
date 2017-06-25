@@ -1,3 +1,4 @@
+// Package factory provides a FIFO queue factory.
 package factory
 
 import (

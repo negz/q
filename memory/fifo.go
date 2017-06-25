@@ -1,3 +1,4 @@
+// Package memory provides an in-memory FIFO queue backed by a linked list.
 package memory
 
 import (

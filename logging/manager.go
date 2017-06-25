@@ -1,3 +1,4 @@
+// Package logging provides logging wrappers for queues and queue managers.
 package logging
 
 import (
