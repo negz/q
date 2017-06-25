@@ -1,21 +1,20 @@
 language: go
 
 go:
-  - 1.7
-  - tip
+  - 1.8
 
 before_install:
-  - go get -u gopkg.in/alecthomas/gometalinter.v1
-  - gometalinter.v1 --install
-  - ./getglide.sh
+  - go get -u github.com/golang/dep/cmd/dep
+  - go get -u github.com/alecthomas/gometalinter
+  - gometalinter --install
 
 install:
-  - glide install
+  - dep ensure
 
 script:
-  - ./test.sh
-  - gometalinter.v1 --vendor --deadline 5m --disable gotype --errors ./...
-  - gometalinter.v1 --vendor --deadline 5m --disable gotype --disable gas --exclude "_test\.go" --exclude "not checked.+Close" ./...
+  - ./scripts/test.sh
+  - gometalinter --vendor --deadline 5m --disable gotype --errors ./...
+  - gometalinter --vendor --deadline 5m --disable gotype --disable gas --exclude "_test\.go" --exclude "not checked.+Close" ./...
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
