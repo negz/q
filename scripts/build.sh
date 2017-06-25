@@ -16,16 +16,19 @@ pushd cmd/q
     go build .
     docker build --tag negz/queue:$(git rev-parse --short HEAD) .
     docker build --tag negz/queue:latest .
+    rm q
 popd
 
 pushd cmd/qrest
     go build .
     docker build --tag negz/qrest:$(git rev-parse --short HEAD) .
     docker build --tag negz/qrest:latest .
+    rm qrest
 popd
 
 pushd cmd/qcli
     go build .
     docker build --tag negz/qcli:$(git rev-parse --short HEAD) .
     docker build --tag negz/qcli:latest .
+    rm qcli
 popd
