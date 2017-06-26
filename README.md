@@ -36,13 +36,14 @@ port.
 `q` consists of the following packages. Refer to their GoDocs for API details:
 * [q](https://godoc.org/github.com/negz/q) - Defines the core interfaces and types for the queue service.
 * [q/e](https://godoc.org/github.com/negz/q/e) - Provides error types and handling.
+* [q/boltdb](https://godoc.org/github.com/negz/q/boltdb) - A (currently unused) BoltDb backed implementation of `q.Queue`.
 * [q/factory](https://godoc.org/github.com/negz/q/factory) - A `q.Factory` implementation.
 * [q/logging](https://godoc.org/github.com/negz/q/logging) - Log emitting wrappers for `q.Queue` and `q.Manager`.
 * [q/manager](https://godoc.org/github.com/negz/q/manager) - Implementations of `q.Manager`.
 * [q/memory](https://godoc.org/github.com/negz/q/memory) - An in-memory implementation of `q.Queue`.
 * [q/metrics](https://godoc.org/github.com/negz/q/metrics) - Metric emitting wrappers for `q.Queue`.
 * [q/rpc](https://godoc.org/github.com/negz/q/rpc) - Implements gRPC API for `q`.
-* [q/proto](https://godoc.org/github.com/negz/q/proto) - Protocol buffer specification for the gRPC API and database serialisation.
+* [q/proto](https://godoc.org/github.com/negz/q/proto) - Protocol buffer specification for the gRPC API and on-disk serialisation.
 * [q/test/fixtures](https://godoc.org/github.com/negz/q/test/fixtures) - Common fixtures used to test `q`.
 
 # Running
