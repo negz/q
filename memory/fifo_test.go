@@ -40,43 +40,45 @@ var fifoTests = []struct {
 
 func TestFIFO(t *testing.T) {
 	for _, tt := range fifoTests {
-		q := New(Limit(tt.limit), Tagged(q.Tag{"function", "space station"}))
+		queue := New(Limit(tt.limit), Tagged(q.Tag{"function", "space station"}))
 
 		t.Run("Add", func(t *testing.T) {
 			for _, m := range tt.messages {
-				if err := q.Add(m); err != nil {
+				if err := queue.Add(m); err != nil {
 					if len(tt.messages) > tt.limit && e.IsFull(err) {
 						continue
 					}
-					t.Errorf("q.Add(%v): %v", m, err)
+					t.Errorf("queue.Add(%v): %v", m, err)
 				}
 			}
 		})
 
 		t.Run("Peek", func(t *testing.T) {
-			m, err := q.Peek()
+			m, err := queue.Peek()
 			if err != nil {
 				if len(tt.messages) < 1 && e.IsNotFound(err) {
 					return
 				}
-				t.Errorf("q.Peek(): %v", err)
+				t.Errorf("queue.Peek(): %v", err)
+				return
 			}
 			if !reflect.DeepEqual(tt.messages[0], m) {
-				t.Errorf("q.Peek(): want %v, got %v", tt.messages[0], m)
+				t.Errorf("queue.Peek(): want %v, got %v", tt.messages[0], m)
 			}
 		})
 
 		t.Run("Pop", func(t *testing.T) {
 			for i := range tt.messages {
-				m, err := q.Pop()
+				m, err := queue.Pop()
 				if err != nil {
 					if i == len(tt.messages)-1 && e.IsNotFound(err) {
 						continue
 					}
-					t.Errorf("q.Pop(): %v", err)
+					t.Errorf("queue.Pop(): %v", err)
+					continue
 				}
 				if !reflect.DeepEqual(tt.messages[i], m) {
-					t.Errorf("q.Pop(): want %v, got %v", tt.messages[i], m)
+					t.Errorf("queue.Pop(): want %v, got %v", tt.messages[i], m)
 				}
 			}
 		})

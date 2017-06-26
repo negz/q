@@ -19,7 +19,7 @@ type fifo struct {
 	m     *sync.RWMutex
 }
 
-// An Option represents an optional argument to a new in-memory linked list.
+// An Option represents an optional argument to a new in-memory FIFO queue.
 type Option func(*fifo)
 
 // Limit specifies the maximum number of messages that may exist in a queue.
