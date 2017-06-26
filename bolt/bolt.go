@@ -187,16 +187,16 @@ func (b *bdb) Add(m *q.Message) error {
 			return e.ErrFull(errors.Errorf("queue %s has reached limit of %d messages", b.ID(), b.limit))
 		}
 
-		msgs, err := bucket.CreateBucketIfNotExists(keyMessages)
-		if err != nil {
-			return errors.Wrap(err, "cannot create messages bucket")
+		msgs, berr := bucket.CreateBucketIfNotExists(keyMessages)
+		if berr != nil {
+			return errors.Wrap(berr, "cannot create messages bucket")
 		}
 
 		// This returns an error only if the Tx is closed or not writeable,
 		// which can't happen inside an update.
 		i, _ := msgs.NextSequence()
-		if err := msgs.Put(itob(int(i)), bmsg); err != nil {
-			return errors.Wrap(err, "cannot store message")
+		if perr := msgs.Put(itob(int(i)), bmsg); perr != nil {
+			return errors.Wrap(perr, "cannot store message")
 		}
 		return nil
 	})

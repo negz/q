@@ -158,8 +158,8 @@ func (s *qServer) Add(_ context.Context, r *proto.AddRequest) (*proto.AddRespons
 	p := r.GetMessage().GetPayload()
 	tags := proto.ToTags(r.GetMessage().GetTags())
 	m := q.NewMessage(p, q.Tagged(tags...))
-	if err := queue.Add(m); err != nil {
-		return nil, e.GRPC(errors.Wrap(err, "cannot add message to queue"))
+	if aerr := queue.Add(m); aerr != nil {
+		return nil, e.GRPC(errors.Wrap(aerr, "cannot add message to queue"))
 	}
 	pm, err := proto.FromMessage(m)
 	if err != nil {
