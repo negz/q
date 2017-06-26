@@ -12,7 +12,7 @@ will be forgotten when the `q` process dies. :)
 # Components
 The q service consists of three binaries:
 * `q` - The main logic. Serves a gRPC API on port 10002.
-* `qrest` - Serves a (mostly) automatically generated REST to gRPC gateway on port 80. See `rpc/proto/q.swagger.json` for the API spec.
+* `qrest` - Serves a (mostly) automatically generated REST to gRPC gateway on port 80. See `proto/q.swagger.json` for the API spec.
 * `qcli` - A commandline gRPC client for `q`.
 
 # Metrics, logging, and management
