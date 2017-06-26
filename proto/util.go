@@ -15,12 +15,14 @@ import (
 var FromStore = map[q.Store]Queue_Store{
 	q.UnknownStore: UNKNOWN,
 	q.Memory:       MEMORY,
+	q.BoltDB:       BOLTDB,
 }
 
 // ToStore maps protobuf generated store types to q.Store.
 var ToStore = map[Queue_Store]q.Store{
 	UNKNOWN: q.UnknownStore,
 	MEMORY:  q.Memory,
+	BOLTDB:  q.BoltDB,
 }
 
 // ParseID parses a string ID into a uuid.UUID.
