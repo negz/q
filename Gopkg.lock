@@ -20,6 +20,12 @@
   revision = "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9"
 
 [[projects]]
+  name = "github.com/boltdb/bolt"
+  packages = ["."]
+  revision = "583e8937c61f1af6513608ccc75c97b6abdf4ff9"
+  version = "v1.3.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/facebookgo/clock"
   packages = ["."]
@@ -128,6 +134,12 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "c23410a886927bab8ca5e80b08af6a56faeb330d"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/text"
   packages = ["internal/gen","internal/triegen","internal/ucd","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
   revision = "4e9ab9ee170f2a39bd66c92b3e0a47ff47a4bc77"
@@ -153,6 +165,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d262ae0f4c87e38065a002114891dab3f420963fe109d0c0167944facae0fa2b"
+  inputs-digest = "2481925009cd6b9675d798364fe1c9cc8d037acd1005d592e50fc95e00f2fdfa"
   solver-name = "gps-cdcl"
   solver-version = 1
