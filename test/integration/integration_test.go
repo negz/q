@@ -15,8 +15,8 @@ import (
 
 	"github.com/negz/q/manager"
 	"github.com/negz/q/metrics"
+	"github.com/negz/q/proto"
 	"github.com/negz/q/rpc"
-	"github.com/negz/q/rpc/proto"
 )
 
 const Unbounded int64 = -1
