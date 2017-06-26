@@ -19,6 +19,9 @@ const (
 
 	// Memory queues are in-memory. Their contents do not persist across process restarts.
 	Memory
+
+	// BoltDB queues are persisted to disk using a BoltDB store.
+	BoltDB
 )
 
 // Error differentiates errors for metric collection purposes.

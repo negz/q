@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/negz/q/rpc/proto"
+	"github.com/negz/q/proto"
 )
 
 const (

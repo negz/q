@@ -247,7 +247,8 @@
       "type": "string",
       "enum": [
         "UNKNOWN",
-        "MEMORY"
+        "MEMORY",
+        "BOLTDB"
       ],
       "default": "UNKNOWN"
     },

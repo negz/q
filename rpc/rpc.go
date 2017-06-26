@@ -11,7 +11,7 @@ import (
 	"github.com/negz/q"
 	"github.com/negz/q/e"
 	"github.com/negz/q/factory"
-	"github.com/negz/q/rpc/proto"
+	"github.com/negz/q/proto"
 )
 
 // A Server serves gRPC requests.
@@ -60,7 +60,7 @@ func (s *qServer) ListQueues(_ context.Context, _ *proto.ListQueuesRequest) (*pr
 	}
 	queues := make([]*proto.Queue, 0, len(l))
 	for _, queue := range l {
-		pq, err := queueToProto(queue)
+		pq, err := proto.FromQueue(queue)
 		if err != nil {
 			return nil, e.GRPC(errors.Wrap(err, "cannot marshal queue to protobuf"))
 		}
@@ -70,15 +70,15 @@ func (s *qServer) ListQueues(_ context.Context, _ *proto.ListQueuesRequest) (*pr
 }
 
 func (s *qServer) NewQueue(_ context.Context, r *proto.NewQueueRequest) (*proto.NewQueueResponse, error) {
-	tags := tagsFromProto(r.GetTags())
-	queue, err := s.f.New(storeFromProto[r.GetStore()], int(r.GetLimit()), tags...)
+	tags := proto.ToTags(r.GetTags())
+	queue, err := s.f.New(proto.ToStore[r.GetStore()], int(r.GetLimit()), tags...)
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot create new queue"))
 	}
 	if aerr := s.m.Add(queue); aerr != nil {
 		return nil, e.GRPC(errors.Wrap(aerr, "cannot add queue to manager"))
 	}
-	pq, err := queueToProto(queue)
+	pq, err := proto.FromQueue(queue)
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot marshal queue to protobuf"))
 	}
@@ -86,7 +86,7 @@ func (s *qServer) NewQueue(_ context.Context, r *proto.NewQueueRequest) (*proto.
 }
 
 func (s *qServer) GetQueue(_ context.Context, r *proto.GetQueueRequest) (*proto.GetQueueResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -94,7 +94,7 @@ func (s *qServer) GetQueue(_ context.Context, r *proto.GetQueueRequest) (*proto.
 	if err != nil {
 		return nil, e.GRPC(errors.Wrapf(err, "cannot get queue %s", id))
 	}
-	pq, err := queueToProto(queue)
+	pq, err := proto.FromQueue(queue)
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot marshal queue to protobuf"))
 	}
@@ -102,7 +102,7 @@ func (s *qServer) GetQueue(_ context.Context, r *proto.GetQueueRequest) (*proto.
 }
 
 func (s *qServer) DeleteQueue(_ context.Context, r *proto.DeleteQueueRequest) (*proto.DeleteQueueResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -113,7 +113,7 @@ func (s *qServer) DeleteQueue(_ context.Context, r *proto.DeleteQueueRequest) (*
 }
 
 func (s *qServer) AddQueueTag(_ context.Context, r *proto.AddQueueTagRequest) (*proto.AddQueueTagResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -130,7 +130,7 @@ func (s *qServer) AddQueueTag(_ context.Context, r *proto.AddQueueTagRequest) (*
 }
 
 func (s *qServer) DeleteQueueTag(_ context.Context, r *proto.DeleteQueueTagRequest) (*proto.DeleteQueueTagResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -147,7 +147,7 @@ func (s *qServer) DeleteQueueTag(_ context.Context, r *proto.DeleteQueueTagReque
 }
 
 func (s *qServer) Add(_ context.Context, r *proto.AddRequest) (*proto.AddResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -156,12 +156,12 @@ func (s *qServer) Add(_ context.Context, r *proto.AddRequest) (*proto.AddRespons
 		return nil, e.GRPC(errors.Wrapf(err, "cannot get queue %s", id))
 	}
 	p := r.GetMessage().GetPayload()
-	tags := tagsFromProto(r.GetMessage().GetTags())
+	tags := proto.ToTags(r.GetMessage().GetTags())
 	m := q.NewMessage(p, q.Tagged(tags...))
-	if err := queue.Add(m); err != nil {
-		return nil, e.GRPC(errors.Wrap(err, "cannot add message to queue"))
+	if aerr := queue.Add(m); aerr != nil {
+		return nil, e.GRPC(errors.Wrap(aerr, "cannot add message to queue"))
 	}
-	pm, err := messageToProto(m)
+	pm, err := proto.FromMessage(m)
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot marshal message to protobuf"))
 	}
@@ -169,7 +169,7 @@ func (s *qServer) Add(_ context.Context, r *proto.AddRequest) (*proto.AddRespons
 }
 
 func (s *qServer) Pop(_ context.Context, r *proto.PopRequest) (*proto.PopResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -181,7 +181,7 @@ func (s *qServer) Pop(_ context.Context, r *proto.PopRequest) (*proto.PopRespons
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot pop message from queue"))
 	}
-	pm, err := messageToProto(m)
+	pm, err := proto.FromMessage(m)
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot marshal message to protobuf"))
 	}
@@ -189,7 +189,7 @@ func (s *qServer) Pop(_ context.Context, r *proto.PopRequest) (*proto.PopRespons
 }
 
 func (s *qServer) Peek(_ context.Context, r *proto.PeekRequest) (*proto.PeekResponse, error) {
-	id, err := parseID(r.GetQueueId())
+	id, err := proto.ParseID(r.GetQueueId())
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot parse ID"))
 	}
@@ -201,7 +201,7 @@ func (s *qServer) Peek(_ context.Context, r *proto.PeekRequest) (*proto.PeekResp
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot peek into queue"))
 	}
-	pm, err := messageToProto(m)
+	pm, err := proto.FromMessage(m)
 	if err != nil {
 		return nil, e.GRPC(errors.Wrap(err, "cannot marshal message to protobuf"))
 	}

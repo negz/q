@@ -1,14 +1,19 @@
-package memory
+package bdb
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
+	"time"
 
+	"github.com/boltdb/bolt"
 	"github.com/negz/q"
 	"github.com/negz/q/e"
 )
 
-var fifoTests = []struct {
+var boltTests = []struct {
 	messages []*q.Message
 	limit    int
 }{
@@ -38,9 +43,31 @@ var fifoTests = []struct {
 	},
 }
 
-func TestFIFO(t *testing.T) {
-	for _, tt := range fifoTests {
-		queue := New(Limit(tt.limit), Tagged(q.Tag{"function", "space station"}))
+func TestBolt(t *testing.T) {
+	for _, tt := range boltTests {
+		tmp, err := ioutil.TempDir(".", "qtestbolt")
+		if err != nil {
+			t.Fatalf("ioutil.TempDir(): %v", err)
+		}
+		defer os.RemoveAll(tmp)
+
+		path := filepath.Join(tmp, "db")
+		opts := &bolt.Options{Timeout: 1 * time.Second}
+		db, err := bolt.Open(path, 0600, opts)
+		if err != nil {
+			t.Fatalf("bolt.Open(%v, %v, %v): %v", path, 0600, opts, err)
+		}
+		defer db.Close()
+
+		queue, err := New(db, Limit(tt.limit))
+		if err != nil {
+			t.Fatalf("New(%v, Limit(%v)): %v", db, tt.limit, err)
+		}
+
+		queue, err = Open(db, queue.ID())
+		if err != nil {
+			t.Fatalf("Open(%v, %v): %v", db, queue.ID(), tt.limit, err)
+		}
 
 		t.Run("Add", func(t *testing.T) {
 			for _, m := range tt.messages {
